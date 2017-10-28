@@ -6,9 +6,9 @@ import requests
 import re
 import os
 import sys
-reload(sys)
-
-sys.setdefaultencoding('utf-8')
+#reload(sys)
+#
+#sys.setdefaultencoding('utf-8')
 
 class Myspider(scrapy.Spider):
     name='XiaoHua'
@@ -22,7 +22,7 @@ class Myspider(scrapy.Spider):
     def parse_one(self,response):
         #创建一个大的list存储所有的item
         items=[]
-        pattern=re.compile(r'<div class="title".*?<a.*?href="(.*?)">(.*?)</a></span></div>',re.S)
+        pattern=re.compile('<div class="title".*?<a.*?href="(.*?)">(.*?)</a></span></div>',re.S)
         mains=re.findall(pattern,response.text)
         for main in mains:
             #创建实例,并转化为字典
@@ -37,10 +37,12 @@ class Myspider(scrapy.Spider):
 
     def parse_two(self,response):
         #传入上面的item1
+        print("into parse_two")
+        print("into parse_two")
         item2=response.meta['item1']
         source=requests.get(response.url)
-        html=source.text.encode('utf-8')
-        pattern=re.compile(r'共(.*?)页',re.S)
+        html=source.text
+        pattern=re.compile('共(.*?)页',re.S)
         Num=re.search(pattern,html).group(1)
         items=[]
         for i in range(1,int(Num)+1):
@@ -53,21 +55,12 @@ class Myspider(scrapy.Spider):
             yield Request(url=item['pageURL'],meta={'item2':item},callback=self.parse_three)
 
     def parse_three(self,response):
+        print("into parse_three")
         item=XiaohuaItem()
         item3=response.meta['item2']
         #传入上面的item2
-        pattern=re.compile(r'<li class="pic-down h-pic-down"><a target="_blank" class="down-btn" href=\'(.*?)\'>.*?</a>',re.S)
+        pattern=re.compile('<li class="pic-down h-pic-down"><a target="_blank" class="down-btn" href=\'(.*?)\'>.*?</a>',re.S)
         URL=re.search(pattern,response.text).group(1)
         item['detailURL']=URL
         item['title']=item3['title']
         yield item
-
-
-
-
-
-
-
-
-
-
