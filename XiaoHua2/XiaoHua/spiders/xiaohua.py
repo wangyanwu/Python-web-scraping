@@ -2,7 +2,6 @@
 import scrapy
 from XiaoHua.items import XiaohuaItem
 from scrapy.http import Request
-import requests
 import re
 
 
@@ -12,8 +11,8 @@ class Myspider(scrapy.Spider):
     allowed_domains=['mmonly.cc']
     def start_requests(self):
         #一共有6页
-        for i in range(2,3):
-            url='https://www.mmonly.cc/tag/xh1/'+str(i)+'.html'
+        for i in range(1,2):
+            url='http://www.mmonly.cc/mmtp/xgmn/list_10_'+str(i)+'.html'
             yield Request(url,callback=self.parse_one)
 
     def parse_one(self,response):
