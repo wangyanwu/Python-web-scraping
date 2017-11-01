@@ -3,13 +3,31 @@ import scrapy
 from scrapy.exceptions import DropItem
 from scrapy.pipelines.images import ImagesPipeline
 from XiaoHua import settings
-import sys
+import re
 #reload(sys)
 #sys.setdefaultencoding('utf-8')
 
 class XiaohuaPipeline(ImagesPipeline):
+    def file_path(self, request, response=None, info=None):
+        """
+        :param request: 每一个图片下载管道请求
+        :param response:
+        :param info:
+        :param strip :清洗Windows系统的文件夹非法字符，避免无法创建目录
+        :return: 每套图的分类目录
+        """
+        item = request.meta['item']
+        folder = item['title']
+        folder_strip = strip(folder)
+        image_guid = request.url.split('/')[-1]
+        filename = u'full/{0}/{1}'.format(folder_strip, image_guid)
+        print(filename)
+        return filename
+    
     def get_media_requests(self, item,info):
-        yield scrapy.Request(item['detailURL'])
+        #一定要把meta 传递下去。
+        yield scrapy.Request(item['detailURL'],meta={'item':item})
+        
 
     def item_completed(self,results,item,info):
         path=[x['path'] for ok,x in results if ok]
@@ -18,3 +36,11 @@ class XiaohuaPipeline(ImagesPipeline):
         print(u'正在保存图片：', item['detailURL'])
         print (u'主题', item['title'])
         return item
+    
+def strip(path):
+    """
+    :param path: 需要清洗的文件夹名字
+    :return: 清洗掉Windows系统非法文件夹名字的字符串
+    """
+    path = re.sub(r'[？\\*|“<>:/]', '', str(path))
+    return path

@@ -4,18 +4,15 @@ from XiaoHua.items import XiaohuaItem
 from scrapy.http import Request
 import requests
 import re
-import os
-import sys
-#reload(sys)
-#
-#sys.setdefaultencoding('utf-8')
+
+
 
 class Myspider(scrapy.Spider):
     name='XiaoHua'
     allowed_domains=['mmonly.cc']
     def start_requests(self):
         #一共有6页
-        for i in range(1,7):
+        for i in range(2,3):
             url='https://www.mmonly.cc/tag/xh1/'+str(i)+'.html'
             yield Request(url,callback=self.parse_one)
 
@@ -37,13 +34,11 @@ class Myspider(scrapy.Spider):
 
     def parse_two(self,response):
         #传入上面的item1
-        print("into parse_two")
-        print("into parse_two")
         item2=response.meta['item1']
-        source=requests.get(response.url)
-        html=source.text
+#        source=requests.get(response.url)
+#        html=source.text.decode().encode('utf-8')
         pattern=re.compile('共(.*?)页',re.S)
-        Num=re.search(pattern,html).group(1)
+        Num=re.search(pattern,response.text).group(1)
         items=[]
         for i in range(1,int(Num)+1):
             item=XiaohuaItem()
@@ -55,7 +50,6 @@ class Myspider(scrapy.Spider):
             yield Request(url=item['pageURL'],meta={'item2':item},callback=self.parse_three)
 
     def parse_three(self,response):
-        print("into parse_three")
         item=XiaohuaItem()
         item3=response.meta['item2']
         #传入上面的item2
