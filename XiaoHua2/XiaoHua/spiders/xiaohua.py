@@ -1,8 +1,11 @@
 # --coding:utf-8--
 import scrapy
 from XiaoHua.items import XiaohuaItem
-from scrapy.http import Request
+from scrapy import Request
 import re
+#import sys
+#reload(sys)
+#sys.setdefaultencoding('utf-8')
 
 
 
@@ -19,7 +22,8 @@ class Myspider(scrapy.Spider):
         #创建一个大的list存储所有的item
         items=[]
         pattern=re.compile('<div class="title".*?<a.*?href="(.*?)">(.*?)</a></span></div>',re.S)
-        mains=re.findall(pattern,response.text)
+        html=response.text
+        mains=re.findall(pattern,html)
         for main in mains:
             #创建实例,并转化为字典
             item=XiaohuaItem()
@@ -33,11 +37,15 @@ class Myspider(scrapy.Spider):
 
     def parse_two(self,response):
         #传入上面的item1
+#        response.encoding=response.apparent_encoding
         item2=response.meta['item1']
 #        source=requests.get(response.url)
 #        html=source.text.decode().encode('utf-8')
+        
+        html=response.text
+#        print(html)
         pattern=re.compile('共(.*?)页',re.S)
-        Num=re.search(pattern,response.text).group(1)
+        Num=re.search(pattern,html).group(1)
         items=[]
         for i in range(1,int(Num)+1):
             item=XiaohuaItem()

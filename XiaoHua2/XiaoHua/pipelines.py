@@ -4,8 +4,8 @@ from scrapy.exceptions import DropItem
 from scrapy.pipelines.images import ImagesPipeline
 from XiaoHua import settings
 import re
-#reload(sys)
-#sys.setdefaultencoding('utf-8')
+
+
 
 class XiaohuaPipeline(ImagesPipeline):
     def file_path(self, request, response=None, info=None):

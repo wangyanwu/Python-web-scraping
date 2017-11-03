@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 # Scrapy settings for XiaoHua project
 BOT_NAME = 'XiaoHua'
 SPIDER_MODULES = ['XiaoHua.spiders']
@@ -24,7 +24,7 @@ DEFAULT_REQUEST_HEADERS = {
 
 #管道设置
 ITEM_PIPELINES = {'XiaoHua.pipelines.XiaohuaPipeline': 10}
-IMAGES_STORE=r'F:\\Desktop\code\info\XiaoHua2'
+IMAGES_STORE=r'D:\\QMDownload\XiaoHua2'
 
 #IMAGES_THUMBS用于生成大小不同的缩略图
 #以字典形式表示，键为文件名，值为图片尺寸
