@@ -12,7 +12,7 @@ from scrapy import Selector
 
 class MyImageSpider(scrapy.Spider):
     name = "xpathimage"
-    allowed_domains = ["www.javbu.cc"]
+    allowed_domains = ["www.javbus.cc","pics.dmm.co.jp","pics.javcdn.pw"]
     
     
     def start_requests(self):
@@ -60,7 +60,8 @@ class MyImageSpider(scrapy.Spider):
 #            print(type(title))
             url=args[1]
             if len(title)!=0:
-                item['title']=url[0].split('/')[-1]+title[0]
+#                item['title']=url[0].split('/')[-1]+title[0]
+                item['title']=url[0].split('/')[-1]
                 item['siteURL']=url[0]
 #                print(item['title'],item['siteURL'])
                 items.append(item)
@@ -70,7 +71,8 @@ class MyImageSpider(scrapy.Spider):
             print("wangyanwu",item['title'],item['siteURL'])
             yield Request(url=item['siteURL'],meta={'item1':item},callback=self.parseTwo)        
 #        items['image_urls']=response.xpath('//div[@class="swipeboxEx"]/div[@class="list"]/a/img/@data-original').extract()
-    
+        print("end parseOne")
+            
     def parseTwo(self,response):
         print("intoparseTwo")
 #        divs = response.xpath('//p[contains(@class,"picBox")]')
@@ -85,7 +87,9 @@ class MyImageSpider(scrapy.Spider):
         coverurl=response.xpath('//a[contains(@class,"bigImage")]/@href').extract()
         URLs=response.xpath('//a[contains(@class,"sample-box")]/@href').extract()
         URLs.append(coverurl[0])
+#        print(URLs)
         for URL in URLs:
            item['detailURL']=URL
            item['title']=item2['title']
+           print(item)
            yield item

@@ -25,7 +25,7 @@ class MyImagesPipeline(ImagesPipeline):
         item = request.meta['item']
         folder = item['title']
         folder_strip = strip(folder)
-        image_guid = request.url.split('?')[-2].split('/')[-1]
+        image_guid = request.url.split('/')[-1]
         filename = u'full/{0}/{1}'.format(folder_strip, image_guid)
         print(filename)
         return filename
