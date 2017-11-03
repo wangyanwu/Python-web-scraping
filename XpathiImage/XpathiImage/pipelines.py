@@ -27,6 +27,7 @@ class MyImagesPipeline(ImagesPipeline):
         folder_strip = strip(folder)
         image_guid = request.url.split('?')[-2].split('/')[-1]
         filename = u'full/{0}/{1}'.format(folder_strip, image_guid)
+        print(filename)
         return filename
     
     def get_media_requests(self, item,info):

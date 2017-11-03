@@ -38,7 +38,7 @@ class MyImageSpider(scrapy.Spider):
         """
         src='http://www.moko.cc'
         items=[]
-        item=XpathiimageItem()
+        
 #        pattern=re.compile('<div class="cover" cover-text="(.*?)">.*?href="(.*?)".*?</div>',re.S)
 ##text='<div class="cover" cover-text="来一波小清新"><a href="/post/1270140.html" hidefocus="true" target="_blank"><img src2="http://img.mb.moko.cc/2017-10-20/cbf84483-0eb6-45e0-b1c1-80f18a210e5a.jpg" alt="迷醉儿作品《来一波小清新》"/></a></div>'
 #        mains=re.findall(pattern,response.text)
@@ -51,24 +51,27 @@ class MyImageSpider(scrapy.Spider):
         mylinks=response.xpath('//div[contains(@class,"cover")]')
         
         for index,link  in enumerate(mylinks):
+#item 必须在for循环中创建，由于字典不允许key重复。否则会items只会把最后一个写入字典中。
+            item=XpathiimageItem()
             args=(index, link.xpath('@cover-text').extract(), link.xpath('a/@href').extract())
             title=args[1]
-            print(type(title))
+#            print(type(title))
             url=args[2]
-            if title!=[]:
-                item['title']=title
+            if len(title)!=0:
+                item['title']=title[0]
                 item['siteURL']=src+url[0]
                 print(item['title'],item['siteURL'])
                 items.append(item)
-            
+        print(items)
         for item in items:
             #用meta传入下一层
+            print(item['title'],item['siteURL'])
             yield Request(url=item['siteURL'],meta={'item1':item},callback=self.parseTwo)        
 #        items['image_urls']=response.xpath('//div[@class="swipeboxEx"]/div[@class="list"]/a/img/@data-original').extract()
     
     def parseTwo(self,response):
         print("intoparseTwo")
-        
+#        divs = response.xpath('//p[contains(@class,"picBox")]')
         item=XpathiimageItem()
         item2=response.meta['item1']
         picpattern=re.compile('<p class="picBox"><img src2="(http.*?)".*?</p>')
