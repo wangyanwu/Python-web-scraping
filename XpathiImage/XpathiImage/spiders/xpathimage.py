@@ -12,7 +12,7 @@ from scrapy import Selector
 
 class MyImageSpider(scrapy.Spider):
     name = "xpathimage"
-    allowed_domains = ["www.moko.cc"]
+    allowed_domains = ["www.javbu.cc"]
     
     
     def start_requests(self):
@@ -21,7 +21,7 @@ class MyImageSpider(scrapy.Spider):
         输出：启动爬虫
         用途：用于多页爬取。
         '''
-        start_urls = ['http://www.moko.cc/channels/post/23/1.html']
+        start_urls = ['https://www.javbus.cc/label/7l']
 #        print(start_urls)
         for url in start_urls:
             
@@ -36,7 +36,7 @@ class MyImageSpider(scrapy.Spider):
         输出:启动下一级爬虫。
         用途：将目录页的相册标题和src+url放到一个大的list里，启动下一级爬虫。
         """
-        src='http://www.moko.cc'
+#        src='http://www.moko.cc'
         items=[]
         
 #        pattern=re.compile('<div class="cover" cover-text="(.*?)">.*?href="(.*?)".*?</div>',re.S)
@@ -48,24 +48,26 @@ class MyImageSpider(scrapy.Spider):
 #            item['title']=main[0]
 #            item['siteURL']=src+main[1]
 #            items.append(item)
-        mylinks=response.xpath('//div[contains(@class,"cover")]')
+#        mylinks=response.xpath('//div[contains(@class,"cover")]')
+        mylinks=response.xpath('//a[contains(@class,"movie-box")]')
         
         for index,link  in enumerate(mylinks):
 #item 必须在for循环中创建，由于字典不允许key重复。否则会items只会把最后一个写入字典中。
             item=XpathiimageItem()
-            args=(index, link.xpath('@cover-text').extract(), link.xpath('a/@href').extract())
-            title=args[1]
+#            args=(index, link.xpath('@cover-text').extract(), link.xpath('a/@href').extract())
+            args=(index, link.xpath('@href').extract(), link.xpath('div/img/@title').extract())
+            title=args[2]
 #            print(type(title))
-            url=args[2]
+            url=args[1]
             if len(title)!=0:
-                item['title']=title[0]
-                item['siteURL']=src+url[0]
-                print(item['title'],item['siteURL'])
+                item['title']=url[0].split('/')[-1]+title[0]
+                item['siteURL']=url[0]
+#                print(item['title'],item['siteURL'])
                 items.append(item)
-        print(items)
+#        print(items)
         for item in items:
             #用meta传入下一层
-            print(item['title'],item['siteURL'])
+            print("wangyanwu",item['title'],item['siteURL'])
             yield Request(url=item['siteURL'],meta={'item1':item},callback=self.parseTwo)        
 #        items['image_urls']=response.xpath('//div[@class="swipeboxEx"]/div[@class="list"]/a/img/@data-original').extract()
     
@@ -74,9 +76,16 @@ class MyImageSpider(scrapy.Spider):
 #        divs = response.xpath('//p[contains(@class,"picBox")]')
         item=XpathiimageItem()
         item2=response.meta['item1']
-        picpattern=re.compile('<p class="picBox"><img src2="(http.*?)".*?</p>')
-        URLs=re.findall(picpattern,response.text)
+#        picpattern=re.compile('<p class="picBox"><img src2="(http.*?)".*?</p>')
+#        URLs=re.findall(picpattern,response.text)
+#        for URL in URLs:
+#            item['detailURL']=URL
+#            item['title']=item2['title']
+#            yield item
+        coverurl=response.xpath('//a[contains(@class,"bigImage")]/@href').extract()
+        URLs=response.xpath('//a[contains(@class,"sample-box")]/@href').extract()
+        URLs.append(coverurl[0])
         for URL in URLs:
-            item['detailURL']=URL
-            item['title']=item2['title']
-            yield item
+           item['detailURL']=URL
+           item['title']=item2['title']
+           yield item

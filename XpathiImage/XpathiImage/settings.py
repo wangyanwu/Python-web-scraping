@@ -20,7 +20,7 @@ NEWSPIDER_MODULE = 'XpathiImage.spiders'
 
 # Obey robots.txt rules
 ITEM_PIPELINES = {'XpathiImage.pipelines.MyImagesPipeline': 1}
-IMAGES_STORE = r'F:\\mzitu'   # 图片存储路径
+IMAGES_STORE = r'D:\\QMDownload'   # 图片存储路径
 IMAGES_EXPIRES = 90                                   # 过期天数
 IMAGES_MIN_HEIGHT = 200                               # 图片的最小高度
 IMAGES_MIN_WIDTH = 200                                # 图片的最小宽度
