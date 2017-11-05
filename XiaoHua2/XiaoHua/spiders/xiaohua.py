@@ -14,22 +14,38 @@ class Myspider(scrapy.Spider):
     allowed_domains=['mmonly.cc']
     def start_requests(self):
         #一共有6页
-        for i in range(1,2):
-            url='http://www.mmonly.cc/mmtp/xgmn/list_10_'+str(i)+'.html'
+        for i in range(1,67):
+            url='http://www.mmonly.cc/mmtp/swmn/list_11_'+str(i)+'.html'
             yield Request(url,callback=self.parse_one)
 
     def parse_one(self,response):
+        """
+        输入：response
+        输出：Request
+        用途：提取页面上相册的标题和url，存放在item里。通过meta传给下一个处理函数
+        """
         #创建一个大的list存储所有的item
         items=[]
-        pattern=re.compile('<div class="title".*?<a.*?href="(.*?)">(.*?)</a></span></div>',re.S)
-        html=response.text
-        mains=re.findall(pattern,html)
-        for main in mains:
-            #创建实例,并转化为字典
+        mylinks=response.css('div[class*=title]')
+        for index,link  in enumerate(mylinks):
             item=XiaohuaItem()
-            item['siteURL']=main[0]
-            item['title']=main[1]
-            items.append(item)
+            args=(index, link.css('div span a::attr(href)').extract(), link.css('div span a::text').extract())
+            title=args[2]
+            url=args[1]
+            if(len(title)!=0):
+                item['title']=title[0]
+                item['siteURL']=url[0]
+                items.append(item)
+#        pattern=re.compile('<div class="title".*?<a.*?href="(.*?)">(.*?)</a></span></div>',re.S)
+#        html=response.text
+#        mains=re.findall(pattern,html)
+#        for main in mains:
+#            #创建实例,并转化为字典
+#            item=XiaohuaItem()
+#            item['siteURL']=main[0]
+#            item['title']=main[1]
+#            items.append(item)
+            
 
         for item in items:
             #用meta传入下一层

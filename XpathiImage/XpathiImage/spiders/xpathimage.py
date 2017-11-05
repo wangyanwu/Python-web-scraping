@@ -21,10 +21,10 @@ class MyImageSpider(scrapy.Spider):
         输出：启动爬虫
         用途：用于多页爬取。
         '''
-        start_urls = ['https://www.javbus.cc/label/7l']
+        start_urls = ['https://www.javbus.cc/studio/by']
 #        print(start_urls)
-        for url in start_urls:
-            
+        for i in range(1,35):
+            url=start_urls[0]+'/'+str(i)
             yield Request(url,callback=self.parseOne)
 #        start_urls = ['http://www.moko.cc/channels/post/23/1.html']
 #        print(start_urls)
@@ -74,6 +74,11 @@ class MyImageSpider(scrapy.Spider):
         print("end parseOne")
             
     def parseTwo(self,response):
+        """
+        input:response。含url和meta
+        output:item。
+        用途：处理详情页，提取图片地址。
+        """
         print("intoparseTwo")
 #        divs = response.xpath('//p[contains(@class,"picBox")]')
         item=XpathiimageItem()
@@ -84,6 +89,9 @@ class MyImageSpider(scrapy.Spider):
 #            item['detailURL']=URL
 #            item['title']=item2['title']
 #            yield item
+        '提取演员名字'
+        actress=response.xpath('//div[contains(@class,"star-name")]/a/@title').extract()
+        '提取图片URL'
         coverurl=response.xpath('//a[contains(@class,"bigImage")]/@href').extract()
         URLs=response.xpath('//a[contains(@class,"sample-box")]/@href').extract()
         URLs.append(coverurl[0])
@@ -91,5 +99,6 @@ class MyImageSpider(scrapy.Spider):
         for URL in URLs:
            item['detailURL']=URL
            item['title']=item2['title']
+           item['actress']=actress[0]
            print(item)
            yield item
