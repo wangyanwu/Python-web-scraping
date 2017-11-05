@@ -61,6 +61,7 @@ class MyImageSpider(scrapy.Spider):
             url=args[1]
             if len(title)!=0:
 #                item['title']=url[0].split('/')[-1]+title[0]
+                """获取番号"""
                 item['title']=url[0].split('/')[-1]
                 item['siteURL']=url[0]
 #                print(item['title'],item['siteURL'])

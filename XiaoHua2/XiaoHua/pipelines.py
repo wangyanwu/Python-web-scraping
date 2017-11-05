@@ -15,6 +15,7 @@ class XiaohuaPipeline(ImagesPipeline):
         :param info:
         :param strip :清洗Windows系统的文件夹非法字符，避免无法创建目录
         :return: 每套图的分类目录
+        用途：重写file_path函数。用标题当目录，生成图片的存放路径。
         """
         item = request.meta['item']
         folder = item['title']

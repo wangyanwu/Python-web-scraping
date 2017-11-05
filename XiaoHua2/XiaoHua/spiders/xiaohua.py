@@ -13,6 +13,10 @@ class Myspider(scrapy.Spider):
     name='XiaoHua'
     allowed_domains=['mmonly.cc']
     def start_requests(self):
+        """
+        重写 start_requests函数。
+        用途：批量爬取多个标签页。
+        """
         #一共有6页
         for i in range(1,67):
             url='http://www.mmonly.cc/mmtp/swmn/list_11_'+str(i)+'.html'
@@ -52,6 +56,11 @@ class Myspider(scrapy.Spider):
             yield Request(url=item['siteURL'],meta={'item1':item},callback=self.parse_two)
 
     def parse_two(self,response):
+        """
+        输入：response
+        输出：产生下一级爬虫。
+        用途：提取页面上的页数。批量产生下一级爬虫。
+        """
         #传入上面的item1
 #        response.encoding=response.apparent_encoding
         item2=response.meta['item1']
@@ -73,6 +82,12 @@ class Myspider(scrapy.Spider):
             yield Request(url=item['pageURL'],meta={'item2':item},callback=self.parse_three)
 
     def parse_three(self,response):
+        """
+        输入：response
+        输出：item
+        用途：
+        获取页面上图片的具体网址，存放在item里。
+        """
         item=XiaohuaItem()
         item3=response.meta['item2']
         #传入上面的item2
